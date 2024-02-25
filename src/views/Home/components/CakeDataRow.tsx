@@ -5,9 +5,8 @@ import tokens from 'config/constants/tokens'
 import { useTranslation } from 'contexts/Localization'
 import useIntersectionObserver from 'hooks/useIntersectionObserver'
 import { useEffect, useState } from 'react'
-import { usePriceCakeBusd } from 'state/farms/hooks'
 import styled from 'styled-components'
-import { formatBigNumber, formatLocalisedCompactNumber } from 'utils/formatBalance'
+import { formatBigNumber } from 'utils/formatBalance'
 import { multicallv2 } from 'utils/multicall'
 import useSWR from 'swr'
 import { SLOW_INTERVAL } from 'config/constants'
@@ -45,8 +44,6 @@ const Grid = styled.div`
   }
 `
 
-const emissionsPerBlock = 14.25
-
 const CakeDataRow = () => {
   const { t } = useTranslation()
   const { observerRef, isIntersecting } = useIntersectionObserver()
@@ -59,9 +56,9 @@ const CakeDataRow = () => {
   } = useSWR(
     loadData ? ['cakeDataRow'] : null,
     async () => {
-      const totalSupplyCall = { address: tokens.cake.address, name: 'totalSupply' }
+      const totalSupplyCall = { address: tokens.mgc.address, name: 'totalSupply' }
       const burnedTokenCall = {
-        address: tokens.cake.address,
+        address: tokens.mgc.address,
         name: 'balanceOf',
         params: ['0x000000000000000000000000000000000000dEaD'],
       }
@@ -71,17 +68,14 @@ const CakeDataRow = () => {
       const [totalSupply, burned] = tokenDataResultRaw.flat()
 
       return {
-        cakeSupply: totalSupply && burned ? +formatBigNumber(totalSupply.sub(burned)) : 0,
-        burnedBalance: burned ? +formatBigNumber(burned) : 0,
+        cakeSupply: totalSupply && burned ? +formatBigNumber(totalSupply.mul(10e8).sub(burned.mul(10e8))) : 0,
+        burnedBalance: burned ? +formatBigNumber(burned.mul(10e8)) : 0,
       }
     },
     {
       refreshInterval: SLOW_INTERVAL,
     },
   )
-  const cakePriceBusd = usePriceCakeBusd()
-  const mcap = cakePriceBusd.times(cakeSupply)
-  const mcapString = formatLocalisedCompactNumber(mcap.toNumber())
 
   useEffect(() => {
     if (isIntersecting) {
@@ -92,7 +86,7 @@ const CakeDataRow = () => {
   return (
     <Grid>
       <Flex flexDirection="column">
-        <Text color="textSubtle">{t('Total supply')}</Text>
+        <Text color="textSubtle">{t('Circulating supply')}</Text>
         {cakeSupply ? (
           <Balance decimals={0} lineHeight="1.1" fontSize="24px" bold value={cakeSupply} />
         ) : (
@@ -111,17 +105,8 @@ const CakeDataRow = () => {
         )}
       </StyledColumn>
       <StyledColumn noMobileBorder>
-        <Text color="textSubtle">{t('Market cap')}</Text>
-        {mcap?.gt(0) && mcapString ? (
-          <Heading scale="lg">{t('$%marketCap%', { marketCap: mcapString })}</Heading>
-        ) : (
-          <Skeleton height={24} width={126} my="4px" />
-        )}
-      </StyledColumn>
-      <StyledColumn>
-        <Text color="textSubtle">{t('Current emissions')}</Text>
-
-        <Heading scale="lg">{t('%cakeEmissions%/block', { cakeEmissions: emissionsPerBlock })}</Heading>
+        <Text color="textSubtle">{t('MAX supply')}</Text>
+        <Heading scale="lg">{t('%cakeEmissions%', { cakeEmissions: '100,000,000,000' })}</Heading>
       </StyledColumn>
     </Grid>
   )
