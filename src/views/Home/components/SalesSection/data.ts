@@ -50,29 +50,22 @@ export const earnSectionData = (t: TranslateFunction): SalesSectionProps => ({
 })
 
 export const cakeSectionData = (t: TranslateFunction): SalesSectionProps => ({
-  headingText: t('CAKE makes our world go round.'),
-  bodyText: t(
-    'CAKE token is at the heart of the PancakeSwap ecosystem. Buy it, win it, farm it, spend it, stake it... heck, you can even vote with it!',
-  ),
+  headingText: t('RZ makes our world go round.'),
+  bodyText: t('Dexrz ecosystem.buy it ...!'),
   reverse: false,
   primaryButton: {
-    to: '/swap?outputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82',
-    text: t('Buy CAKE'),
+    to: '/swap?outputCurrency=0xbb73BB2505AC4643d5C0a99c2A1F34B3DfD09D11',
+    text: t('Buy MGC'),
     external: false,
   },
   secondaryButton: {
-    to: 'https://docs.pancakeswap.finance/tokenomics/cake',
-    text: t('Learn'),
+    to: 'https://vps1.ir',
+    text: t(''),
     external: true,
   },
 
   images: {
     path: '/images/home/cake/',
-    attributes: [
-      { src: 'bottom-right', alt: t('Small 3d pancake') },
-      { src: 'top-right', alt: t('Small 3d pancake') },
-      { src: 'coin', alt: t('CAKE token') },
-      { src: 'top-left', alt: t('Small 3d pancake') },
-    ],
+    attributes: [{ src: 'coin', alt: t('CAKE token') }],
   },
 })
